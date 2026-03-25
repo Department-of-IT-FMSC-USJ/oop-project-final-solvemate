@@ -1,16 +1,13 @@
-package com.solvmate.service;
+package com.solvemate.service;
 
-import com.solvmate.model.Report;
-import com.solvmate.repository.ReportRepository;
+import com.solvemate.model.Report;
+import com.solvemate.repository.ReportRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.List;
 
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Paragraph;
 
 @Service
 public class ReportService {
@@ -21,39 +18,47 @@ public class ReportService {
         this.repository = repository;
     }
 
+   
+
     public Report generateReport(Report report) {
         return repository.save(report);
     }
+
+   
 
     public List<Report> getAllReports() {
         return repository.findAll();
     }
 
     public Report getReportById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("Report not found"));
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Report not found with id: " + id));
     }
 
-    // PDF Export
-    public byte[] exportReportAsPdf(Long id) {
+    
+    public byte[] exportReportAsText(Long id) {
         Report report = getReportById(id);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter writer = new PdfWriter(baos);
-        PdfDocument pdf = new PdfDocument(writer);
-        Document document = new Document(pdf);
+        PrintStream ps = new PrintStream(baos);
 
-        document.add(new Paragraph("SolvMate Report"));
-        document.add(new Paragraph("Polymer: " + report.getPolymerName()));
-        document.add(new Paragraph("Solvent: " + report.getSolventName()));
-        document.add(new Paragraph("Compatibility Score: " + report.getCompatibilityScore()));
-        document.add(new Paragraph("Trial Result: " + report.getTrialResult()));
-        document.add(new Paragraph("Observation: " + report.getOutcomeObservation()));
-        document.add(new Paragraph("Cost Analysis: $" + report.getCostAnalysis()));
-        document.add(new Paragraph("Environmental Impact: " + report.getEnvImpactSummary()));
-        document.add(new Paragraph("EU Compliance: " + report.getEuComplianceStatus()));
-        document.add(new Paragraph("Final Decision: " + report.getFinalDecision()));
+        ps.println("============================================");
+        ps.println("           SOLVEMATE REPORT                 ");
+        ps.println("============================================");
+        ps.println();
+        ps.println("Polymer        : " + report.getPolymerName());
+        ps.println("Solvent        : " + report.getSolventName());
+        ps.println("Compat. Score  : " + report.getCompatibilityScore());
+        ps.println("Trial Result   : " + report.getTrialResult());
+        ps.println("Observation    : " + report.getOutcomeObservation());
+        ps.println("Cost Analysis  : $" + report.getCostAnalysis());
+        ps.println("Env. Impact    : " + report.getEnvImpactSummary());
+        ps.println("EU Compliance  : " + report.getEuComplianceStatus());
+        ps.println("Final Decision : " + report.getFinalDecision());
+        ps.println();
+        ps.println("============================================");
+        ps.close();
 
-        document.close();
         return baos.toByteArray();
     }
 }
