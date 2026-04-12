@@ -1,6 +1,5 @@
 package com.solvemate.controller;
 
-import com.solvemate.dto.CompatibilityResultResponse;
 import com.solvemate.service.CompatibilityService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

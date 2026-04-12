@@ -1,6 +1,6 @@
-package com.solvmate.repository;
+package com.solvemate.repository;
 
-import com.solvmate.model.Solvent;
+import com.solvemate.model.Solvent;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

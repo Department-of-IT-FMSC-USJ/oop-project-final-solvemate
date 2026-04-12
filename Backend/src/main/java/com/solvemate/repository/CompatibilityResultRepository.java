@@ -13,4 +13,6 @@ public interface CompatibilityResultRepository extends JpaRepository<Compatibili
 
     List<CompatibilityResult> findByPolymer_PolymerIdAndResultOrderByCompatibilityScoreDesc(
             Long polymerId, String result);
+
+    void deleteByPolymer_PolymerId(Long polymerId);
 }
