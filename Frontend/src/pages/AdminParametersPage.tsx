@@ -1,22 +1,17 @@
 import { useState } from "react";
 
-
-
 export default function AdminParametersPage() {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
     const today = new Date().toLocaleDateString("en-GB");
 
-    const [deltaD, setDeltaD]           = useState(4);
-    const [deltaP, setDeltaP]           = useState(1);
-    const [deltaH, setDeltaH]           = useState(1);
-    const [mlWeight, setMlWeight]       = useState(30);
-    const [threshold, setThreshold]     = useState(1.2);
-    const [saved, setSaved]             = useState(false);
+    const [threshold, setThreshold]       = useState(0.5);
+    const [topK, setTopK]                 = useState(5);
+    const [saved, setSaved]               = useState(false);
     const [lastModified, setLastModified] = useState(today);
 
     const handleSave = () => {
         localStorage.setItem("solvemate_params", JSON.stringify({
-            deltaD, deltaP, deltaH, mlWeight, threshold,
+            threshold, topK,
             modifiedBy: user.fullName || "Admin",
             modifiedAt: today
         }));
@@ -25,113 +20,108 @@ export default function AdminParametersPage() {
         setTimeout(() => setSaved(false), 3000);
     };
 
+    const features = [
+        { feature: "delta_d_solvent",      desc: "Dispersion parameter of solvent" },
+        { feature: "delta_p_solvent",      desc: "Polar parameter of solvent" },
+        { feature: "delta_h_solvent",      desc: "Hydrogen bonding parameter of solvent" },
+        { feature: "molar_volume_cm3_mol", desc: "Molar volume of solvent (cm³/mol)" },
+        { feature: "delta_d_polymer",      desc: "Dispersion parameter of polymer" },
+        { feature: "delta_p_polymer",      desc: "Polar parameter of polymer" },
+        { feature: "delta_h_polymer",      desc: "Hydrogen bonding parameter of polymer" },
+    ];
+
     return (
         <>
             <h1 className="admin-page-title">Compatibility Parameters</h1>
-            <p className="admin-page-subtitle">Configure Hansen Solubility calculation weights and thresholds</p>
+            <p className="admin-page-subtitle">Configure ML model settings and recommendation thresholds</p>
 
             {saved && <div className="flash-success">Parameters saved successfully ✓</div>}
 
             <div className="params-layout">
 
-                {/* ── Left: Main settings ─────────────────────────────── */}
                 <div className="params-card">
                     <p className="params-section-title">⚙ System Parameters</p>
 
-                    {/* ── Hansen Parameter Weights ──────────────────── */}
-                    <p className="params-group-title">Hansen Parameter Weights</p>
+                    <p className="params-group-title">ML Model</p>
                     <p className="params-group-desc">
-                        Adjust the relative importance of each Hansen parameter in the Ra calculation
+                        The system uses a trained Random Forest Classifier to predict
+                        polymer-solvent compatibility. The model was trained on 800
+                        real polymer-solvent pairs.
                     </p>
 
-                    <div className="param-row">
-                        <div className="param-label-row">
-                            <span className="param-label">δD (Dispersion) Weight</span>
-                            <span className="param-value">{deltaD}</span>
+                    <div style={{ background: "#f9fafb", borderRadius: "12px", padding: "16px 20px", marginBottom: "24px" }}>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                            <div>
+                                <p style={{ margin: "0 0 4px", fontSize: "12px", color: "#9ca3af", fontWeight: 600, textTransform: "uppercase" }}>Algorithm</p>
+                                <p style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#111827" }}>Random Forest Classifier</p>
+                            </div>
+                            <div>
+                                <p style={{ margin: "0 0 4px", fontSize: "12px", color: "#9ca3af", fontWeight: 600, textTransform: "uppercase" }}>Number of Trees</p>
+                                <p style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#111827" }}>200</p>
+                            </div>
+                            <div>
+                                <p style={{ margin: "0 0 4px", fontSize: "12px", color: "#9ca3af", fontWeight: 600, textTransform: "uppercase" }}>Training Dataset</p>
+                                <p style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#111827" }}>800 polymer-solvent pairs</p>
+                            </div>
+                            <div>
+                                <p style={{ margin: "0 0 4px", fontSize: "12px", color: "#9ca3af", fontWeight: 600, textTransform: "uppercase" }}>Model File</p>
+                                <p style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#111827" }}>solvemate_ml_model.pkl</p>
+                            </div>
                         </div>
-                        <input
-                            type="range" min={1} max={8} value={deltaD}
-                            className="param-slider"
-                            onChange={e => setDeltaD(Number(e.target.value))}
-                        />
-                        <p className="param-hint">Current: {deltaD}x (Standard: 4x) — used as {deltaD}·(ΔδD)² in Ra formula</p>
-                    </div>
-
-                    <div className="param-row">
-                        <div className="param-label-row">
-                            <span className="param-label">δP (Polar) Weight</span>
-                            <span className="param-value">{deltaP}</span>
-                        </div>
-                        <input
-                            type="range" min={1} max={4} value={deltaP}
-                            className="param-slider"
-                            onChange={e => setDeltaP(Number(e.target.value))}
-                        />
-                        <p className="param-hint">Current: {deltaP}x (Standard: 1x)</p>
-                    </div>
-
-                    <div className="param-row">
-                        <div className="param-label-row">
-                            <span className="param-label">δH (Hydrogen Bonding) Weight</span>
-                            <span className="param-value">{deltaH}</span>
-                        </div>
-                        <input
-                            type="range" min={1} max={4} value={deltaH}
-                            className="param-slider"
-                            onChange={e => setDeltaH(Number(e.target.value))}
-                        />
-                        <p className="param-hint">Current: {deltaH}x (Standard: 1x)</p>
                     </div>
 
                     <hr className="param-divider" />
 
-                    {/* ── ML Model Weight ───────────────────────────── */}
-                    <p className="params-group-title">ML Model Weight</p>
+                    <p className="params-group-title">Input Features</p>
                     <p className="params-group-desc">
-                        Percentage of weight given to the ML model's probability in the final compatibility score.
-                        The remaining percentage uses the physics-based Hansen calculation.
+                        These 7 features are sent to the ML model for each solvent-polymer pair.
                     </p>
 
-                    <div className="param-row">
-                        <div className="param-label-row">
-                            <span className="param-label">ML Model Weight</span>
-                            <span className="param-value">{mlWeight}%</span>
-                        </div>
-                        <input
-                            type="range" min={0} max={100} value={mlWeight}
-                            className="param-slider"
-                            onChange={e => setMlWeight(Number(e.target.value))}
-                        />
-                        <p className="param-hint">
-                            {mlWeight}% ML (Logistic Regression), {100 - mlWeight}% Hansen physics calculation
-                        </p>
+                    <div style={{ background: "#f9fafb", borderRadius: "12px", padding: "16px 20px", marginBottom: "24px" }}>
+                        {features.map((f, i) => (
+                            <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "8px 0", borderBottom: i < 6 ? "1px solid #e5e7eb" : "none" }}>
+                                <span style={{ fontFamily: "monospace", fontSize: "13px", color: "#2563eb" }}>{f.feature}</span>
+                                <span style={{ fontSize: "13px", color: "#6b7280" }}>{f.desc}</span>
+                            </div>
+                        ))}
                     </div>
 
                     <hr className="param-divider" />
 
-                    {/* Compatibility Threshold  */}
-                    <p className="params-group-title">Compatibility Threshold</p>
+                    <p className="params-group-title">Recommendation Settings</p>
                     <p className="params-group-desc">
-                        Ra/R₀ ratio threshold for pre-filtering solvents before ML ranking.
-                        Solvents with RED above this value are excluded from recommendations.
+                        Configure how the ML model output is used to generate recommendations.
                     </p>
 
                     <div className="param-row">
                         <div className="param-label-row">
-                            <span className="param-label">Ra/R₀ Threshold</span>
+                            <span className="param-label">Compatibility Threshold</span>
                             <span className="param-value">{threshold}</span>
                         </div>
                         <input
-                            type="number"
-                            className="param-number-input"
+                            type="range" min={0.1} max={0.9} step={0.05}
                             value={threshold}
-                            step={0.1}
-                            min={0.5}
-                            max={3.0}
-                            onChange={e => setThreshold(parseFloat(e.target.value) || 1.2)}
+                            className="param-slider"
+                            onChange={e => setThreshold(parseFloat(e.target.value))}
                         />
                         <p className="param-hint">
-                            Solvents with Ra/R₀ &lt; {threshold} are considered compatible and passed to ML ranking
+                            Solvents with ML probability ≥ {threshold} are marked as Compatible
+                        </p>
+                    </div>
+
+                    <div className="param-row">
+                        <div className="param-label-row">
+                            <span className="param-label">Top K Recommendations</span>
+                            <span className="param-value">{topK}</span>
+                        </div>
+                        <input
+                            type="range" min={3} max={10} step={1}
+                            value={topK}
+                            className="param-slider"
+                            onChange={e => setTopK(parseInt(e.target.value))}
+                        />
+                        <p className="param-hint">
+                            Number of top solvents to recommend (currently Top {topK})
                         </p>
                     </div>
 
@@ -140,27 +130,24 @@ export default function AdminParametersPage() {
                     </button>
                 </div>
 
-
                 <div className="params-right-panel">
 
-                    {/* About Hansen Parameters */}
                     <div className="params-info-card">
-                        <p className="params-info-title">About Hansen Parameters</p>
+                        <p className="params-info-title">How the ML Model Works</p>
                         <div className="params-info-item">
-                            <h4>δD — Dispersion</h4>
-                            <p>Accounts for London dispersion forces between molecules</p>
+                            <h4>1. Feature Extraction</h4>
+                            <p>Hansen Solubility Parameters (δD, δP, δH) and molar volume are extracted for both polymer and solvent</p>
                         </div>
                         <div className="params-info-item">
-                            <h4>δP — Polar</h4>
-                            <p>Represents dipole-dipole interactions between molecules</p>
+                            <h4>2. Random Forest Prediction</h4>
+                            <p>200 decision trees vote on compatibility. The result is P(compatible) — a probability from 0.0 to 1.0</p>
                         </div>
                         <div className="params-info-item">
-                            <h4>δH — Hydrogen Bonding</h4>
-                            <p>Describes hydrogen bonding capacity of the substance</p>
+                            <h4>3. Ranking</h4>
+                            <p>All solvents are sorted by ML probability descending. Top {topK} are returned as recommendations</p>
                         </div>
                     </div>
 
-                    {/* Change History */}
                     <div className="params-info-card">
                         <p className="params-info-title">🕐 Change History</p>
                         <div className="change-history-item">
@@ -171,20 +158,17 @@ export default function AdminParametersPage() {
                         </div>
                     </div>
 
-                    {/* Formula */}
                     <div className="params-info-card">
-                        <p className="params-info-title">Formula</p>
+                        <p className="params-info-title">ML Output</p>
                         <div className="formula-box">
-                            <p className="formula-text">Ra = √({deltaD}·(ΔδD)² + {deltaP}·(ΔδP)² + {deltaH}·(ΔδH)²)</p>
-                            <p className="formula-text">RED = Ra / R₀</p>
-                            <p className="formula-text">Compatible if RED &lt; {threshold}</p>
+                            <p className="formula-text">Output: P(compatible) ∈ [0.0, 1.0]</p>
+                            <p className="formula-text">Score = P(compatible) × 100%</p>
+                            <p className="formula-text">Compatible if P ≥ {threshold}</p>
                             <hr style={{ border: "none", borderTop: "1px solid #e5e7eb", margin: "10px 0" }} />
-                            <p className="formula-text">
-                                Final Score = {mlWeight}% × ML_Probability + {100 - mlWeight}% × Physics_Score
-                            </p>
                             <p className="formula-text" style={{ fontSize: "11px", color: "#9ca3af" }}>
-                                ML: Logistic Regression model (sklearn)<br />
-                                Trained on 800 polymer-solvent pairs
+                                Algorithm: Random Forest (n=200)<br />
+                                Library: scikit-learn (Python)<br />
+                                Served via: Flask REST API (port 5000)
                             </p>
                         </div>
                     </div>
