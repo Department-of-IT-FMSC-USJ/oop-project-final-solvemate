@@ -1,18 +1,17 @@
-import { useState, useEffect } from "react";
+import { useaState, useEffect } from "react";
 import type { PolymerResponse, PolymerData } from "../services/api";
 import { getAllPolymers, addPolymer, updatePolymer, deletePolymer } from "../services/api";
 import PolymerModal from "../components/PolymerModal";
-import "../styles/table.css";
 
 export default function AdminPolymersPage() {
     const [polymers, setPolymers]           = useState<PolymerResponse[]>([]);
     const [loading, setLoading]             = useState(true);
-    const [error, setError]                 = useState("");
     const [search, setSearch]               = useState("");
     const [showModal, setShowModal]         = useState(false);
     const [editing, setEditing]             = useState<PolymerResponse | null>(null);
     const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
     const [actionMsg, setActionMsg]         = useState("");
+    const [error, setError]                 = useState("");
 
     useEffect(() => { fetchPolymers(); }, []);
 
@@ -43,62 +42,78 @@ export default function AdminPolymersPage() {
     );
 
     return (
-        <div className="page-container">
-            <div className="page-header">
-                <div>
-                    <h1 className="page-title">Polymer Management</h1>
-                    <p className="page-subtitle">Add, edit and delete polymer Hansen solubility parameters</p>
-                </div>
-                <button className="btn-primary" onClick={() => { setEditing(null); setShowModal(true); }}>
-                    + Add Polymer
-                </button>
-            </div>
+        <>
+            <h1 className="admin-page-title">Polymer Management</h1>
+            <p className="admin-page-subtitle">Manage polymer database and Hansen parameters</p>
 
             {actionMsg && <div className="flash-success">{actionMsg}</div>}
             {error && <div className="flash-error">{error}<button onClick={() => setError("")}>✕</button></div>}
 
-            <div className="search-bar">
-                <span className="search-icon">🔍</span>
-                <input placeholder="Search by name or category..." value={search} onChange={e => setSearch(e.target.value)} />
-                <span className="result-count">{filtered.length} polymers</span>
-            </div>
+            <div className="admin-table-card">
+                <div className="admin-table-header">
+                    <h2>Polymers ({filtered.length})</h2>
+                    <button className="admin-btn-primary" onClick={() => { setEditing(null); setShowModal(true); }}>
+                        + Add Polymer
+                    </button>
+                </div>
 
-            {loading ? <div className="loading-state">Loading...</div> : filtered.length === 0 ? (
-                <div className="empty-state"><p>▣</p><h3>No polymers found</h3><p>Click "Add Polymer" to get started.</p></div>
-            ) : (
-                <div className="table-wrapper">
-                    <table className="data-table">
+                <div className="admin-search">
+                    <span>🔍</span>
+                    <input
+                        placeholder="Search polymers..."
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                    />
+                </div>
+
+                {loading ? <div className="loading-state">Loading...</div> : filtered.length === 0 ? (
+                    <div className="empty-state"><p>▣</p><h3>No polymers found</h3></div>
+                ) : (
+                    <table className="admin-table">
                         <thead>
-                        <tr><th>#</th><th>Polymer Name</th><th>Category</th><th>δD</th><th>δP</th><th>δH</th><th>R₀</th><th>δT</th><th>Actions</th></tr>
+                            <tr>
+                                <th>Polymer Name</th>
+                                <th>Type</th>
+                                <th>δD</th>
+                                <th>δP</th>
+                                <th>δH</th>
+                                <th>R₀</th>
+                                <th>Actions</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {filtered.map((p, i) => (
-                            <tr key={p.polymerId}>
-                                <td className="td-muted">{i + 1}</td>
-                                <td className="td-bold">{p.polymerName}</td>
-                                <td><span className="badge badge-blue">{p.polymerCategory}</span></td>
-                                <td>{p.deltaD.toFixed(2)}</td>
-                                <td>{p.deltaP.toFixed(2)}</td>
-                                <td>{p.deltaH.toFixed(2)}</td>
-                                <td>{p.r0.toFixed(2)}</td>
-                                <td>{p.deltaT.toFixed(2)}</td>
-                                <td className="td-actions">
-                                    <button className="btn-edit" onClick={() => { setEditing(p); setShowModal(true); }}>Edit</button>
-                                    <button className="btn-delete" onClick={() => setDeleteConfirm(p.polymerId)}>Delete</button>
-                                </td>
-                            </tr>
-                        ))}
+                            {filtered.map(p => (
+                                <tr key={p.polymerId}>
+                                    <td className="td-name">{p.polymerName}</td>
+                                    <td>{p.polymerCategory}</td>
+                                    <td className="td-dim">{p.deltaD}</td>
+                                    <td className="td-dim">{p.deltaP}</td>
+                                    <td className="td-dim">{p.deltaH}</td>
+                                    <td className="td-dim">{p.r0}</td>
+                                    <td>
+                                        <button className="icon-btn edit" onClick={() => { setEditing(p); setShowModal(true); }}>✎</button>
+                                        <button className="icon-btn delete" onClick={() => setDeleteConfirm(p.polymerId)}>🗑</button>
+                                    </td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
-                </div>
-            )}
+                )}
+            </div>
 
-            {showModal && <PolymerModal existing={editing} onSave={handleSave} onClose={() => { setShowModal(false); setEditing(null); }} />}
+            {showModal && (
+                <PolymerModal
+                    existing={editing}
+                    onSave={handleSave}
+                    onClose={() => { setShowModal(false); setEditing(null); }}
+                />
+            )}
 
             {deleteConfirm !== null && (
                 <div className="modal-overlay" onClick={() => setDeleteConfirm(null)}>
                     <div className="confirm-dialog" onClick={e => e.stopPropagation()}>
-                        <h3>Delete Polymer?</h3><p>This action cannot be undone.</p>
+                        <h3>Delete Polymer?</h3>
+                        <p>This action cannot be undone.</p>
                         <div className="confirm-actions">
                             <button className="btn-cancel" onClick={() => setDeleteConfirm(null)}>Cancel</button>
                             <button className="btn-danger" onClick={() => handleDelete(deleteConfirm)}>Delete</button>
@@ -106,6 +121,6 @@ export default function AdminPolymersPage() {
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 }

@@ -1,11 +1,11 @@
-package com.solvmate.model;
+package com.solvemate.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
 @Table(name = "solvents")
-@Data   // Lombok generates getters, setters, toString, equals, hashCode
+@Data
 public class Solvent {
 
     @Id

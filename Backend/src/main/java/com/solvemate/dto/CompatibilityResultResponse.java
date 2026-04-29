@@ -19,7 +19,7 @@ public class CompatibilityResultResponse {
 
     public CompatibilityResultResponse() {}
 
-    // ── Getters / Setters ──────────────────────────────────────────────────────
+    // ── Getters / Setters
 
     public Long getResultId()              { return resultId; }
     public Long getPolymerId()             { return polymerId; }

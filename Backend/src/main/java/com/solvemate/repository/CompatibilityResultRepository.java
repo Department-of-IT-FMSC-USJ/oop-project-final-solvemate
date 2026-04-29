@@ -19,3 +19,5 @@ public interface CompatibilityResultRepository extends JpaRepository<Compatibili
     @Transactional
     void deleteByPolymer_PolymerId(Long polymerId);
 }
+    void deleteByPolymer_PolymerId(Long polymerId);
+}
