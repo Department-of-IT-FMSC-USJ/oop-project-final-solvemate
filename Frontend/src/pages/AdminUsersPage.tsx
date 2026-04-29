@@ -45,24 +45,24 @@ export default function AdminUsersPage() {
                 <div className="table-wrapper">
                     <table className="data-table">
                         <thead>
-                        <tr><th>#</th><th>Full Name</th><th>Email</th><th>Role</th><th>Status</th></tr>
+                            <tr><th>#</th><th>Full Name</th><th>Email</th><th>Role</th><th>Status</th></tr>
                         </thead>
                         <tbody>
-                        {filtered.map((u, i) => (
-                            <tr key={u.userId}>
-                                <td className="td-muted">{i + 1}</td>
-                                <td className="td-bold">{u.fullName}</td>
-                                <td className="td-muted">{u.email}</td>
-                                <td>
+                            {filtered.map((u, i) => (
+                                <tr key={u.userId}>
+                                    <td className="td-muted">{i + 1}</td>
+                                    <td className="td-bold">{u.fullName}</td>
+                                    <td className="td-muted">{u.email}</td>
+                                    <td>
                                         <span className={`badge ${u.role === "ADMIN" ? "badge-blue" : "badge-green"}`}>
                                             {u.role}
                                         </span>
-                                </td>
-                                <td>
-                                    <span className="badge badge-green">ACTIVE</span>
-                                </td>
-                            </tr>
-                        ))}
+                                    </td>
+                                    <td>
+                                        <span className="badge badge-green">ACTIVE</span>
+                                    </td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>

@@ -1,7 +1,7 @@
-package com.solvmate.service;
+package com.solvemate.service;
 
-import com.solvmate.model.Solvent;
-import com.solvmate.repository.SolventRepository;
+import com.solvemate.model.Solvent;
+import com.solvemate.repository.SolventRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

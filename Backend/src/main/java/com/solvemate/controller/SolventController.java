@@ -1,7 +1,7 @@
-package com.solvmate.controller;
+package com.solvemate.controller;
 
-import com.solvmate.model.Solvent;
-import com.solvmate.service.SolventService;
+import com.solvemate.model.Solvent;
+import com.solvemate.service.SolventService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
