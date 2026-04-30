@@ -13,11 +13,10 @@ public interface CompatibilityResultRepository extends JpaRepository<Compatibili
     List<CompatibilityResult> findByPolymer_PolymerIdOrderByCompatibilityScoreDesc(Long polymerId);
 
     List<CompatibilityResult> findByPolymer_PolymerIdAndResultOrderByCompatibilityScoreDesc(
-            Long polymerId, String result);
+            Long polymerId,
+            String result
+    );
 
-    // Needed by CompatibilityServiceImpl to clear old results before saving fresh ones
     @Transactional
-    void deleteByPolymer_PolymerId(Long polymerId);
-}
     void deleteByPolymer_PolymerId(Long polymerId);
 }
