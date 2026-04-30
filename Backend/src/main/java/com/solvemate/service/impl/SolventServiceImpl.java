@@ -28,7 +28,7 @@ public class SolventServiceImpl implements SolventService {
         this.solventRepository = solventRepository;
     }
 
-    // ── Add ───────────────────────────────────────────────────────────────────
+
 
     @Override
     public SolventResponse addSolvent(SolventRequest request) {
@@ -41,7 +41,7 @@ public class SolventServiceImpl implements SolventService {
         return mapToResponse(solvent);
     }
 
-    // ── Update ────────────────────────────────────────────────────────────────
+
 
     @Override
     public SolventResponse updateSolvent(Long id, SolventRequest request) {
@@ -53,7 +53,6 @@ public class SolventServiceImpl implements SolventService {
         return mapToResponse(solvent);
     }
 
-    // ── Delete ────────────────────────────────────────────────────────────────
 
     @Override
     public ApiResponse deleteSolvent(Long id) {
@@ -64,7 +63,7 @@ public class SolventServiceImpl implements SolventService {
         return new ApiResponse("Solvent deleted successfully");
     }
 
-    // ── Read ──────────────────────────────────────────────────────────────────
+
 
     @Override
     public SolventResponse getSolventById(Long id) {
@@ -97,7 +96,6 @@ public class SolventServiceImpl implements SolventService {
                 .toList();
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
 
     /**
      * Populates a Solvent entity from a request DTO (used for both add & update).
