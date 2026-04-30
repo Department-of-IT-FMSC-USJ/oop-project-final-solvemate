@@ -1,49 +1,31 @@
-package com.solvmate.service;
+package com.solvemate.service;
 
-import com.solvmate.model.Solvent;
-import com.solvmate.repository.SolventRepository;
-import org.springframework.stereotype.Service;
+import com.solvemate.dto.ApiResponse;
+import com.solvemate.dto.SolventRequest;
+import com.solvemate.dto.SolventResponse;
 
 import java.util.List;
 
-@Service
-public class SolventService {
+/**
+ * SolventService - interface for solvent management operations.
+ *
+ * OOP Concepts:
+ *  - Abstraction  : defines WHAT operations are available, not HOW
+ *  - Polymorphism : SolventServiceImpl provides the concrete behaviour
+ */
+public interface SolventService {
 
-    private final SolventRepository repository;
+    SolventResponse addSolvent(SolventRequest request);
 
-    public SolventService(SolventRepository repository) {
-        this.repository = repository;
-    }
+    SolventResponse updateSolvent(Long id, SolventRequest request);
 
-    public Solvent addSolvent(Solvent solvent) {
-        return repository.save(solvent);
-    }
+    ApiResponse deleteSolvent(Long id);
 
-    public Solvent updateSolvent(Long id, Solvent updatedSolvent) {
-        return repository.findById(id).map(solvent -> {
-            solvent.setName(updatedSolvent.getName());
-            solvent.setDeltaD(updatedSolvent.getDeltaD());
-            solvent.setDeltaP(updatedSolvent.getDeltaP());
-            solvent.setDeltaH(updatedSolvent.getDeltaH());
-            solvent.setMolarVolume(updatedSolvent.getMolarVolume());
-            solvent.setDeltaT(updatedSolvent.getDeltaT());
-            solvent.setCostPerLiter(updatedSolvent.getCostPerLiter());
-            solvent.setEnvImpactScore(updatedSolvent.getEnvImpactScore());
-            solvent.setEuBanStatus(updatedSolvent.isEuBanStatus());
-            return repository.save(solvent);
-        }).orElseThrow(() -> new RuntimeException("Solvent not found"));
-    }
+    SolventResponse getSolventById(Long id);
 
-    public void deleteSolvent(Long id) {
-        repository.deleteById(id);
-    }
+    List<SolventResponse> getAllSolvents();
 
-    public List<Solvent> getAllSolvents() {
-        return repository.findAll();
-    }
+    List<SolventResponse> getSolventsByEuStatus(boolean banned);
 
-    public Solvent getSolventByName(String name) {
-        return repository.findByName(name);
-    }
+    List<SolventResponse> getSolventsByEnvScore(String score);
 }
-
