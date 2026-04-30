@@ -156,7 +156,7 @@ public class CompatibilityServiceImpl implements CompatibilityService {
         dto.setResultId(r.getResultId());
         dto.setPolymerId(r.getPolymer().getPolymerId());
         dto.setPolymerName(r.getPolymer().getPolymerName());
-        dto.setSolventId(r.getSolvent().getSolventId());
+        dto.setSolventId(r.getSolvent().getId());
         dto.setSolventName(r.getSolvent().getName());
         dto.setDeltaDDifference(r.getDeltaDDifference());
         dto.setDeltaPDifference(r.getDeltaPDifference());
