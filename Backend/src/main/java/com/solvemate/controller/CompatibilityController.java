@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/api/compatibility")
 @CrossOrigin(origins = "*")
@@ -19,13 +18,11 @@ public class CompatibilityController {
         this.compatibilityService = compatibilityService;
     }
 
-
     @PostMapping("/recommend/{polymerId}")
     public ResponseEntity<List<CompatibilityResultResponse>> recommend(
             @PathVariable Long polymerId) {
         return ResponseEntity.ok(compatibilityService.recommendTop5(polymerId));
     }
-
 
     @GetMapping("/results/{polymerId}")
     public ResponseEntity<List<CompatibilityResultResponse>> getResults(
