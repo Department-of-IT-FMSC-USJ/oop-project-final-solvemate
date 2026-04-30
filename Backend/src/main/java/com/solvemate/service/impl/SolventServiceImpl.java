@@ -11,7 +11,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
+/**
+ * SolventServiceImpl - concrete implementation of SolventService.
+ *
+ * OOP Concepts:
+ *  - Polymorphism         : implements SolventService interface
+ *  - Encapsulation        : all business rules live inside this class
+ *  - Single Responsibility: handles only solvent-related operations
+ */
 @Service
 public class SolventServiceImpl implements SolventService {
 
@@ -90,17 +97,31 @@ public class SolventServiceImpl implements SolventService {
     }
 
 
+    /**
+     * Populates a Solvent entity from a request DTO (used for both add & update).
+     * Also computes deltaT = sqrt(deltaD² + deltaP² + deltaH²)
+     */
     private Solvent buildSolvent(Solvent solvent, SolventRequest request) {
         solvent.setName(request.getName());
         solvent.setChemicalFormula(request.getChemicalFormula());
-        solvent.setDeltaD(request.getDeltaD() != null ? request.getDeltaD() : 0.0);
-        solvent.setDeltaP(request.getDeltaP() != null ? request.getDeltaP() : 0.0);
-        solvent.setDeltaH(request.getDeltaH() != null ? request.getDeltaH() : 0.0);
-        solvent.setMolarVolume(request.getMolarVolume() != null ? request.getMolarVolume() : 0.0);
-        solvent.setCostPerLiter(request.getCostPerLiter() != null ? request.getCostPerLiter() : 0.0);
+
+        double dD = request.getDeltaD()        != null ? request.getDeltaD()        : 0.0;
+        double dP = request.getDeltaP()        != null ? request.getDeltaP()        : 0.0;
+        double dH = request.getDeltaH()        != null ? request.getDeltaH()        : 0.0;
+
+        solvent.setDeltaD(dD);
+        solvent.setDeltaP(dP);
+        solvent.setDeltaH(dH);
+
+        // Compute deltaT from the three Hansen components
+        solvent.setDeltaT(Math.sqrt(dD * dD + dP * dP + dH * dH));
+
+        solvent.setMolarVolume(request.getMolarVolume()   != null ? request.getMolarVolume()   : 0.0);
+        solvent.setCostPerLiter(request.getCostPerLiter() != null ? request.getCostPerLiter()  : 0.0);
         solvent.setEnvImpactScore(request.getEnvImpactScore());
         solvent.setToxicityLevel(request.getToxicityLevel() != null ? request.getToxicityLevel() : 0.0);
         solvent.setEuBanStatus(request.getEuBanStatus() != null && request.getEuBanStatus());
+
         return solvent;
     }
 

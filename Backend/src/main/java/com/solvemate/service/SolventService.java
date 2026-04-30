@@ -6,7 +6,13 @@ import com.solvemate.dto.SolventResponse;
 
 import java.util.List;
 
-
+/**
+ * SolventService - interface for solvent management operations.
+ *
+ * OOP Concepts:
+ *  - Abstraction  : defines WHAT operations are available, not HOW
+ *  - Polymorphism : SolventServiceImpl provides the concrete behaviour
+ */
 public interface SolventService {
 
     SolventResponse addSolvent(SolventRequest request);
