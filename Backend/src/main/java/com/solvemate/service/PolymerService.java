@@ -6,13 +6,7 @@ import com.solvemate.dto.PolymerResponse;
 
 import java.util.List;
 
-/**
- * PolymerService - interface defining the Polymer Management contract.
- *
- * OOP Concept - Abstraction:
- *   The interface hides implementation details and exposes only
- *   the operations the rest of the system needs.
- */
+
 public interface PolymerService {
 
     PolymerResponse addPolymer(PolymerRequest request);
