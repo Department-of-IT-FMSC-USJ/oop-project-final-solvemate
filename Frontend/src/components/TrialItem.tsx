@@ -1,21 +1,29 @@
-interface TrialItemProps {
-    title: string;
-    date: string;
+interface Props {
+    title:  string;
+    date:   string;
     status: "successful" | "partial" | "failed";
 }
 
-export default function TrialItem({ title, date, status }: TrialItemProps) {
+export default function TrialItem({ title, date, status }: Props) {
+    const badgeClass =
+        status === "successful" ? "trial-item-badge success" :
+        status === "partial"    ? "trial-item-badge partial" :
+                                  "trial-item-badge failed";
+
+    const badgeLabel =
+        status === "successful" ? "successful" :
+        status === "partial"    ? "partial"    : "failed";
+
     return (
         <div className="trial-item">
-            <div className="trial-left">
-                <div className="trial-icon">⚗</div>
+            <div className="trial-item-left">
+                <span className="trial-item-icon">⚗</span>
                 <div>
-                    <h4>{title}</h4>
-                    <p>{date}</p>
+                    <p className="trial-item-title">{title}</p>
+                    <p className="trial-item-date">{date}</p>
                 </div>
             </div>
-
-            <span className={`trial-status ${status}`}>{status}</span>
+            <span className={badgeClass}>{badgeLabel}</span>
         </div>
     );
 }

@@ -1,13 +1,14 @@
-interface ActionCardProps {
-    title: string;
-    icon: string;
+interface Props {
+    title:   string;
+    icon:    string;
+    onClick: () => void;
 }
 
-export default function ActionCard({ title, icon }: ActionCardProps) {
+export default function ActionCard({ title, icon, onClick }: Props) {
     return (
-        <button className="action-card" type="button">
-            <div className="action-icon">{icon}</div>
-            <div className="action-title">{title}</div>
+        <button className="action-card" onClick={onClick}>
+            <span className="action-card-icon">{icon}</span>
+            <span className="action-card-label">{title}</span>
         </button>
     );
 }

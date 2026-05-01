@@ -1,29 +1,20 @@
-interface StatCardProps {
-    title: string;
-    value: string;
-    subtitle: string;
-    icon: string;
-    accentClass?: string;
-    compactValue?: boolean;
+interface Props {
+    title:       string;
+    value:       string;
+    subtitle:    string;
+    icon:        string;
+    accentClass: string;
 }
 
-export default function StatCard({
-                                     title,
-                                     value,
-                                     subtitle,
-                                     icon,
-                                     accentClass = "",
-                                     compactValue = false,
-                                 }: StatCardProps) {
+export default function StatCard({ title, value, subtitle, icon, accentClass }: Props) {
     return (
         <div className="stat-card">
-            <div className="stat-card-top">
-                <h3>{title}</h3>
-                <span className={`stat-icon ${accentClass}`}>{icon}</span>
+            <div className="stat-card-header">
+                <p className="stat-card-label">{title}</p>
+                <span className={`stat-card-icon ${accentClass}`}>{icon}</span>
             </div>
-
-            <div className={`stat-value ${compactValue ? "compact" : ""}`}>{value}</div>
-            <p className="stat-subtitle">{subtitle}</p>
+            <p className="stat-card-value">{value}</p>
+            <p className="stat-card-sub">{subtitle}</p>
         </div>
     );
 }
