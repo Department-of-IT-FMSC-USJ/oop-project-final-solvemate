@@ -11,7 +11,10 @@ public class RegisterRequest {
     private String fullName;
 
     @NotBlank(message = "Email is required")
-    @Email(message = "Email format is invalid")
+    @Pattern(
+            regexp = "^[a-zA-Z0-9._%+-]+@solvemate\\.com$",
+            message = "Email must be in the format name@solvemate.com"
+    )
     private String email;
 
     @NotBlank(message = "Password is required")
