@@ -1,4 +1,4 @@
-//Base URLs
+
 const BASE         = "http://localhost:8080/api";
 const USERS_URL    = `${BASE}/users`;
 const POLYMERS_URL = `${BASE}/polymers`;
@@ -41,7 +41,7 @@ export const deleteSolvent = (id: number) => apiFetch(`${SOLVENTS_URL}/${id}`, {
 export const recommendTop5 = (polymerId: number): Promise<CompatibilityResult[]> => apiFetch(`${COMPAT_URL}/recommend/${polymerId}`, { method: "POST" });
 export const getCompatibilityResults = (polymerId: number): Promise<CompatibilityResult[]> => apiFetch(`${COMPAT_URL}/results/${polymerId}`);
 
-// ─── Trial Types & APIs ───────────────────────────────────────────────────────
+
 
 export interface TrialData {
   polymerName: string;
