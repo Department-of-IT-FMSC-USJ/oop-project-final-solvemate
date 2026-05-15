@@ -3,14 +3,7 @@ package com.solvemate.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-/**
- * CompatibilityResult - stores calculated compatibility data between a Polymer and Solvent.
- *
- * OOP Concepts:
- *  - Encapsulation: private fields with getters/setters
- *  - Association: ManyToOne relationships to Polymer and Solvent (composition)
- *  - Abstraction: hides HSP math results behind a clean model
- */
+
 @Entity
 @Table(name = "compatibility_results")
 public class CompatibilityResult {
@@ -33,27 +26,26 @@ public class CompatibilityResult {
     private double deltaPDifference;
     private double deltaHDifference;
 
-    // Ra = sqrt(4*dD^2 + dP^2 + dH^2)
+
     private double raValue;
 
-    // RED = Ra / R0   (< 1.0 = compatible, > 1.0 = not)
+
     private double redValue;
 
-    // ML model probability (class 1 = compatible)
+
     private double mlProbability;
 
     // Final hybrid score (weighted combination)
     private double compatibilityScore;
 
-    // Ranking position (1 = best)
+    // Ranking position 
     private int rankPosition;
 
-    // Human-readable result
-    private String result;    // COMPATIBLE / BORDERLINE / INCOMPATIBLE
+    private String result;
 
     private LocalDateTime calculatedAt;
 
-    // ── Constructors ──────────────────────────────────────────────────────────
+
 
     public CompatibilityResult() {
         this.calculatedAt = LocalDateTime.now();
@@ -75,21 +67,14 @@ public class CompatibilityResult {
         this.result             = determineResult(red);
     }
 
-    // ── Business logic ────────────────────────────────────────────────────────
 
-    /**
-     * Determines human-readable result based on RED value.
-     * RED < 1.0  → COMPATIBLE
-     * RED < 1.5  → BORDERLINE
-     * RED >= 1.5 → INCOMPATIBLE
-     */
     private String determineResult(double red) {
         if (red < 1.0)  return "COMPATIBLE";
         if (red < 1.5)  return "BORDERLINE";
         return "INCOMPATIBLE";
     }
 
-    // ── Getters ───────────────────────────────────────────────────────────────
+
 
     public Long getResultId()            { return resultId; }
     public Polymer getPolymer()          { return polymer; }
@@ -105,7 +90,7 @@ public class CompatibilityResult {
     public String getResult()            { return result; }
     public LocalDateTime getCalculatedAt(){ return calculatedAt; }
 
-    // ── Setters ───────────────────────────────────────────────────────────────
+
 
     public void setPolymer(Polymer polymer)                    { this.polymer = polymer; }
     public void setSolvent(Solvent solvent)                    { this.solvent = solvent; }

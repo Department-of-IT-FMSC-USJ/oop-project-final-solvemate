@@ -18,16 +18,16 @@ public class Recommendation {
     @JoinColumn(name = "polymer_id", nullable = false)
     private Polymer polymer;
 
-    // Top-5 results stored as ordered list (rank 1..5)
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "recomm_id")
     private List<CompatibilityResult> rankedSolvents = new ArrayList<>();
 
-    private String rankCriteria;   // e.g. "RED < 1.2 then ML probability"
+    private String rankCriteria;
 
     private LocalDateTime generatedAt;
 
-    // ── Constructors ──────────────────────────────────────────────────────────
+
 
     public Recommendation() {
         this.generatedAt  = LocalDateTime.now();
@@ -42,7 +42,6 @@ public class Recommendation {
 
 
 
-    /* Returns the top-N solvents from the ranked list.*/
 
     public List<CompatibilityResult> generateTop5() {
         return rankedSolvents.stream()
@@ -50,14 +49,14 @@ public class Recommendation {
                 .toList();
     }
 
-    /** Ranks solvents*/
+
     public void rankSolvents() {
         for (int i = 0; i < rankedSolvents.size(); i++) {
             rankedSolvents.get(i).setRankPosition(i + 1);
         }
     }
 
-    //  Getters and Setters
+
 
     public Long getRecommId()                             { return recommId; }
     public Polymer getPolymer()                           { return polymer; }
