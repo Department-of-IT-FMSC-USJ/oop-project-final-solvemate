@@ -1,32 +1,4 @@
-"""
-ml_service.py  –  SolveMate ML Microservice
-============================================
-Wraps the trained solvemate_model.joblib and exposes it as a REST API
-so the Java Spring Boot backend can call it via HTTP.
 
-Run:
-    pip install flask scikit-learn joblib pandas
-    python ml_service.py
-
-Endpoint:
-    POST /predict
-    Body (JSON):
-    {
-        "delta_d_solvent":      18.6,
-        "delta_p_solvent":      1.0,
-        "delta_h_solvent":      4.1,
-        "molar_volume_cm3_mol": 89.4,
-        "delta_d_polymer":      22.28,
-        "delta_p_polymer":      5.75,
-        "delta_h_polymer":      4.3
-    }
-
-    Response:
-    {
-        "probability": 0.823,
-        "compatible": true
-    }
-"""
 
 from flask import Flask, request, jsonify
 import joblib
@@ -35,7 +7,7 @@ import os
 
 app = Flask(__name__)
 
-# ── Load model once at startup ────────────────────────────────────────────────
+# Load model once at startup
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "solvemate_ml_model.pkl")
 
 try:
@@ -46,7 +18,7 @@ except Exception as e:
     print(f"[ML Service] WARNING: Could not load model: {e}")
 
 
-# ── Health check ──────────────────────────────────────────────────────────────
+
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({
@@ -55,7 +27,6 @@ def health():
     })
 
 
-# ── Prediction endpoint ───────────────────────────────────────────────────────
 @app.route("/predict", methods=["POST"])
 def predict():
     if model is None:
@@ -75,10 +46,7 @@ def predict():
         if field not in data:
             return jsonify({"error": f"Missing field: {field}"}), 400
 
-    # Build feature vector — order must exactly match 01_train_model.py:
-    # [delta_d_solvent, delta_p_solvent, delta_h_solvent,
-    #  molar_volume_cm3_mol,
-    #  delta_d_polymer, delta_p_polymer, delta_h_polymer]
+
     features = np.array([[
         data["delta_d_solvent"],
         data["delta_p_solvent"],
@@ -101,7 +69,6 @@ def predict():
         return jsonify({"error": f"Prediction failed: {str(e)}"}), 500
 
 
-# ── Batch prediction (optional, used for debugging) ──────────────────────────
 @app.route("/predict/batch", methods=["POST"])
 def predict_batch():
     if model is None:
@@ -132,6 +99,6 @@ def predict_batch():
     return jsonify({"results": results})
 
 
-# ── Run ───────────────────────────────────────────────────────────────────────
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=False)

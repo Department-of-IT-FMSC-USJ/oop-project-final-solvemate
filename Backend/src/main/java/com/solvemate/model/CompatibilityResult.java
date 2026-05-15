@@ -38,7 +38,7 @@ public class CompatibilityResult {
     // Final hybrid score (weighted combination)
     private double compatibilityScore;
 
-    // Ranking position 
+    // Ranking position
     private int rankPosition;
 
     private String result;
