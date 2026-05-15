@@ -1,4 +1,4 @@
-import { useaState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import type { PolymerResponse, PolymerData } from "../services/api";
 import { getAllPolymers, addPolymer, updatePolymer, deletePolymer } from "../services/api";
 import PolymerModal from "../components/PolymerModal";
